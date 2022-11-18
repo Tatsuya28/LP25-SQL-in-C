@@ -20,7 +20,7 @@ void execute(query_result_t *query) {
         case QUERY_DROP_DB:
             execute_drop_database(query->query_content.database_name);
             break;
-            /* etc. */ 
+            /* etc. */
     }
 }
 

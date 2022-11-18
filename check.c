@@ -18,7 +18,7 @@ bool check_query(query_result_t *query) {
             return check_query_select(&query->query_content.select_query);
             break;
 
-        /* etc. */
+            /* etc. */
 
         default:
             printf("Unsupported query code\n");

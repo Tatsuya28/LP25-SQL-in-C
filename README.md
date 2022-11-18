@@ -107,7 +107,7 @@ Le nom d'une table, et les noms de champs obéissent aux même règles que les n
 
 ### Suppression d'une table
 
-La suppression d'une table se fait avec la commande SQL suivante : `DROP TABLE table_name;`. Elle permet de supprimer la table nommée `table_name`. 
+La suppression d'une table se fait avec la commande SQL suivante : `DROP TABLE table_name;`. Elle permet de supprimer la table nommée `table_name`.
 
 ### Suppression d'une base de données
 
@@ -366,11 +366,11 @@ Il est attendu dans ce projet que le code rendu satisfasse un certain nombre de 
 
 - indentations : les indentations seront faites sur un nombre d'espaces à votre discrétion, mais ce nombre **doit être cohérent dans l'ensemble du code**.
 - Déclaration des pointeurs : l'étoile du pointeur est séparée du type pointé par un espace, et collée au nom de la variable, ainsi :
-	- `int *a` est correct
-	- `int* a`, `int*a` et `int * a` sont incorrects
+    - `int *a` est correct
+    - `int* a`, `int*a` et `int * a` sont incorrects
 - Nommage des variables, des types et des fonctions : vous utiliserez le *snake case*, i.e. des noms sans majuscule et dont les parties sont séparées par des underscores `_`, par exemple :
-	- `ma_variable`, `variable`, `variable_1` et `variable1` sont corrects
-	- `maVariable`, `Variable`, `VariableUn` et `Variable1` sont incorrects
+    - `ma_variable`, `variable`, `variable_1` et `variable1` sont corrects
+    - `maVariable`, `Variable`, `VariableUn` et `Variable1` sont incorrects
 - Position des accolades : une accolade s'ouvre sur la ligne qui débute son bloc (fonction, if, for, etc.) et est immédiatement suivie d'un saut de ligne. Elle se ferme sur la ligne suivant la dernière instruction. L'accolade fermante n'est jamais suivie d'instructions à l'exception du `else` ou du `while` (structure `do ... while`) qui suit l'accolade fermante. Par exemple :
 
 ```c
@@ -408,8 +408,8 @@ else
 
 sont incorrects.
 - Espacement des parenthèses : la parenthèse ouvrante après `if`, `for`, et `while` est séparée de ces derniers par un espace. Après un nom de fonction, l'espace est collé au dernier caractère du nom. Il n'y a pas d'espace après une parenthèse ouvrante, ni avant une parenthèse fermante :
-	- `while (a == 3)`, `for (int i=0; i<3; ++i)`, `if (a == 3)` et `void ma_fonction(void)` sont corrects
-	- `while(a == 3 )`, `for ( i=0;i<3 ; ++i)`, `if ( a==3)` et `void ma_fonction (void )` sont incorrects
+    - `while (a == 3)`, `for (int i=0; i<3; ++i)`, `if (a == 3)` et `void ma_fonction(void)` sont corrects
+    - `while(a == 3 )`, `for ( i=0;i<3 ; ++i)`, `if ( a==3)` et `void ma_fonction (void )` sont incorrects
 - Basé sur les exemples ci dessus, également, les opérateurs sont précédés et suivis d'un espace, sauf dans la définition d'une boucle `for` où ils sont collés aux membres de droite et de gauche.
 - Le `;` qui sépare les termes de la boucle `for` ne prend pas d'espace avant, mais en prend un après.
 
@@ -420,8 +420,8 @@ Le projet est évalué sur les critères suivants :
 - capacité à traiter les cas particuliers sujets à erreur (requêtes SQL mal formées, pointeurs NULL, etc.)
 - Respect des conventions d'écriture de code
 - Documentation du code
-	- Avec des commentaires au format doxygen en entêtes de fonction
-	- Des commentaires pertinents sur le flux d'une fonction (astuces, cas limites, détails de l'algorithme, etc.)
+    - Avec des commentaires au format doxygen en entêtes de fonction
+    - Des commentaires pertinents sur le flux d'une fonction (astuces, cas limites, détails de l'algorithme, etc.)
 - Absence ou faible quantité de fuites mémoire (vérifiables avec `valgrind`)
 - Présentation du projet lors de la dernière séance de TP
 
@@ -576,8 +576,8 @@ Les fonctions décrites dans cette section sont utilisées par la base de donné
 
 Trois fonctions sont nécessaires à la manipulation globale de la base de données :
 
- - `bool directory_exists(char *path)` qui cherche si le répertoire de chemin `path` existe. Cette fonction renvoie `true` si le répertoire existe, `false` sinon.
- - `void create_db_directory(char *name)` qui crée le répertoire de la base de données (il faut que cette dernière n'existe pas encore, d'où la fonction précédente)
+- `bool directory_exists(char *path)` qui cherche si le répertoire de chemin `path` existe. Cette fonction renvoie `true` si le répertoire existe, `false` sinon.
+- `void create_db_directory(char *name)` qui crée le répertoire de la base de données (il faut que cette dernière n'existe pas encore, d'où la fonction précédente)
 - `void recursive_rmdir(char *dirname)` qui permet de supprimer récursivement un répertoire dont le chemin est `dirname`.
 
 Il est également nécessaire que votre programme stocke dans une variable le nom de la base de données en cours d'utilisation (option `-d`), ainsi que son chemin (option `-l`).
@@ -586,18 +586,18 @@ Il est également nécessaire que votre programme stocke dans une variable le no
 
 La création d'une table, puis son utilisation, repose sur la structure `s_field_definition`. Comme pour la BDD, vous devrez d'abord créer les 3 fonctions de base pour gérer l'existence de la table.
 
- - `int table_exists(char *table_name)` qui renvoie 1 si la table `table_name` existe déjà, 0 sinon
- - `void drop_table(char *table_name)`
- - `void create_table(char *table_name, s_field_definition fields[], int fields_count)` qui crée la table
+- `int table_exists(char *table_name)` qui renvoie 1 si la table `table_name` existe déjà, 0 sinon
+- `void drop_table(char *table_name)`
+- `void create_table(char *table_name, s_field_definition fields[], int fields_count)` qui crée la table
 
 La création de la table est un processus de plusieurs étapes (si elle n'existe pas encore) :
 
 - Création du répertoire nommé comme la variable  `table_name`
 - Dans ce répertoire, création des fichiers suivants :
-	 - `table_name.idx`, fichier d'index
-	 - `table_name.def`, fichier de définition de table
-	 - `table_name.data`, fichier de contenu de la table
-	 - le cas échéant, un fichier `table_name.key` pour la clé primaire (il ne peut y en avoir qu'une par table)
+    - `table_name.idx`, fichier d'index
+    - `table_name.def`, fichier de définition de table
+    - `table_name.data`, fichier de contenu de la table
+    - le cas échéant, un fichier `table_name.key` pour la clé primaire (il ne peut y en avoir qu'une par table)
 - Écriture du contenu de la table `table_name.def`
 
 Par la suite, il vous sera nécessaire de comparer les arguments d'une commande SQL avec la structure de la base de données. Ce sera le rôle de la fonction `get_table_definition`.
@@ -608,19 +608,19 @@ Par la suite, il vous sera nécessaire de comparer les arguments d'une commande 
 
 - Construire le buffer binaire qui sera écrit dans le fichier de données
 - Chercher un index et un emplacement libres dans le fichier d'index et le fichier de contenu. Ce choix s'appuie sur l'une des deux conditions suivantes :
-	- Toutes les conditions ci dessous sont vraies :
-		- L'index courant est inactif
-		- L'enregistrement pointé a une taille supérieure ou égale à celle du buffer construit à la première étape
-	- À défaut, un nouvel index et un nouveau contenu sont créés en fins de fichiers d'index et de contenu.
+    - Toutes les conditions ci dessous sont vraies :
+        - L'index courant est inactif
+        - L'enregistrement pointé a une taille supérieure ou égale à celle du buffer construit à la première étape
+    - À défaut, un nouvel index et un nouveau contenu sont créés en fins de fichiers d'index et de contenu.
 
 Les fonctions requises pour réaliser cette tâche sont les suivantes :
- - `add_row_to_table` 
- - `format_row`
- - `compute_record_length`
- - `find_first_free_record`
- Ainsi qu'éventuellement :
- - `get_next_key`
- - `update_key`
+- `add_row_to_table`
+- `format_row`
+- `compute_record_length`
+- `find_first_free_record`
+  Ainsi qu'éventuellement :
+- `get_next_key`
+- `update_key`
 
 ## Lecture dans une table
 
@@ -628,14 +628,13 @@ Pour la lecture dans une table, vous devez utiliser la structure écrite dans le
 
 Pour cela, vous aurez besoin des fonctions suivantes :
 
- - `open_definition_file`
- - `open_index_file`
- - `open_content_file`
- - `get_table_definition`
- - `compute_record_length`
- - `get_filtered_records`
- - `get_table_record`
- - `is_matching_filter`
- - `find_field_in_table_record`
- - `display_table_record_list`
-
+- `open_definition_file`
+- `open_index_file`
+- `open_content_file`
+- `get_table_definition`
+- `compute_record_length`
+- `get_filtered_records`
+- `get_table_record`
+- `is_matching_filter`
+- `find_field_in_table_record`
+- `display_table_record_list`
