@@ -5,9 +5,9 @@
 #include <stdbool.h>
 
 /**
- * Checks the presence of a sequence of one to an indeterminate number of spaces from the sql position.
- * @param sql the string to check
- * @return a pointer to the first non-space encountered
+ * Check the presence of a sequence of one to an indeterminate number of spaces from the sql position.
+ * @param sql Pointer to a position in the sql query.
+ * @return char* Pointer to the first occurrence of a non-space character.
  */
 char *get_sep_space(char *sql) {
     if (!sql)
@@ -24,10 +24,10 @@ char *get_sep_space(char *sql) {
 
 
 /**
- * Checks for a sequence of 0 or more spaces, then for the character c once, then for 0 or more spaces.
- * @param sql the string to check
- * @param c the unique character
- * @return a pointer to the character following this sequence
+ * Check for a sequence of 0 or more spaces, then for the character c once, then for 0 or more spaces.
+ * @param sql Pointer to a position in the sql query.
+ * @param c Character to skip once
+ * @return char* Pointer to the position in the query after the character and spaces.
  */
 char *get_sep_space_and_char(char *sql, char c) {
     if (!sql)
@@ -46,8 +46,33 @@ char *get_sep_space_and_char(char *sql, char c) {
     return sql;
 }
 
+/**
+ * Check that the keyword is identical to the word whose first character is pointed to by sql. The keyword is not
+ * case sensitive.
+ * @param sql Pointer to a position in the sql query.
+ * @param keyword Keyword to check in the sql query.
+ * @return char* Pointer to the position in the query after the keyword.
+ */
 char *get_keyword(char *sql, char *keyword) {
-    return sql;
+    if (!sql || !keyword)
+        return NULL;
+
+    bool valid = true;
+
+    sql = get_sep_space(sql);
+
+    // Check if the keyword is present
+    while (valid && *keyword != '\0') {
+        if (toupper(*sql) != toupper(*keyword))
+            valid = false;
+        sql++;
+        keyword++;
+    }
+
+    if (valid)
+        return sql;
+    else
+        return NULL;
 }
 
 char *get_field_name(char *sql, char *field_name) {
