@@ -75,12 +75,64 @@ char *get_keyword(char *sql, char *keyword) {
         return NULL;
 }
 
+/**
+ * Extract a field name, a table name, or a field value (before converting it to a given type).
+ * @param sql Pointer to a position in the sql query.
+ * @param field_name Buffer where to copy the field name, table name or field value.
+ * @return char* Pointer to the position in the query after the field name, table name or field value.
+ */
 char *get_field_name(char *sql, char *field_name) {
+    if (!sql || has_reached_sql_end(sql))
+        return NULL;
+
+    int i = 0;
+
+    // Check if there is a simple quote character
+    if (*sql == '\'') {
+        sql++;
+        while (*sql != '\'' || !has_reached_sql_end(sql)) {
+            field_name[i] = *sql;
+            i++;
+            sql++;
+        }
+
+        // Check if sql has not reached its end before the simple quote character ending the field name
+        if (has_reached_sql_end(sql))
+            return NULL;
+
+        field_name[i] = '\0';
+    } else {
+        while ((isalnum(*sql) ||  *sql =='_' || *sql == '.' || *sql == '-') && !has_reached_sql_end(sql)) {
+            // Continues until a non-alphanumeric character or the end of the sql string
+            field_name[i] = *sql;
+            i++;
+            sql++;
+        }
+
+        field_name[i] = '\0';
+        if (field_name[0] == '\0')
+            return NULL;
+    }
+
     return sql;
 }
 
+/**
+ * Check if it is the end of the sql query by looking if there are only spaces until the string's end.
+ * @param sql Pointer to a position in the sql query.
+ * @return true If it is the end of the sql query.
+ * @return false If it is not the end of the sql query.
+ */
 bool has_reached_sql_end(char *sql) {
-    return false;
+    if (!sql)
+        return  NULL;
+
+    sql = get_sep_space(sql);
+
+    if (*sql == '\0' || *sql == ';')
+        return true;
+    else
+        return false;
 }
 
 char *parse_fields_or_values_list(char *sql, table_record_t *result) {
