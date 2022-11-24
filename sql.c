@@ -13,12 +13,13 @@ char *get_sep_space(char *sql) {
     if (!sql)
         return NULL;
 
-    char* copy_sql = sql;
+    // naive way
+    // while (sql[0] == ' ')
+    //    sql++;
+    while (isspace(*sql)) // better way
+        sql++;
 
-    while (copy_sql[0] == ' ')
-        copy_sql++;
-
-    return copy_sql;
+    return sql;
 }
 
 
@@ -32,20 +33,17 @@ char *get_sep_space_and_char(char *sql, char c) {
     if (!sql)
         return NULL;
 
-    char* copy_sql = sql;
-    bool separator_found = false;
+    sql = get_sep_space(sql);
 
-    while (copy_sql[0] == ' ' || copy_sql[0] == c) {
-        if (copy_sql[0] == c)
-            separator_found = true;
-
-        copy_sql++;
-    }
-
-    if (!separator_found)
+    // Check if the character is present
+    if (*sql == c)
+        sql++;
+    else
         return NULL;
 
-    return get_sep_space(copy_sql);
+    sql = get_sep_space(sql);
+
+    return sql;
 }
 
 char *get_keyword(char *sql, char *keyword) {
