@@ -102,7 +102,7 @@ char *get_field_name(char *sql, char *field_name) {
 
         field_name[i] = '\0';
     } else {
-        while ((isalnum(*sql) ||  *sql =='_' || *sql == '.' || *sql == '-') && !has_reached_sql_end(sql)) {
+        while ((isalnum(*sql) || *sql == '_' || *sql == '.' || *sql == '-') && !has_reached_sql_end(sql)) {
             // Continues until a non-alphanumeric character or the end of the sql string
             field_name[i] = *sql;
             i++;
@@ -125,7 +125,7 @@ char *get_field_name(char *sql, char *field_name) {
  */
 bool has_reached_sql_end(char *sql) {
     if (!sql)
-        return  NULL;
+        return NULL;
 
     sql = get_sep_space(sql);
 
@@ -135,8 +135,61 @@ bool has_reached_sql_end(char *sql) {
         return false;
 }
 
+/**
+ * Extract a list of fields or values. The result is stored in the data structure table_record_t pointed by result.
+ * @param sql Pointer to a position in the sql query.
+ * @param result Pointer to the list of values or fields names in an organised data structure.
+ * @return char* Pointer to the position in the query after the list of fields or values.
+ */
 char *parse_fields_or_values_list(char *sql, table_record_t *result) {
-    return sql;
+    if (!sql || !result)
+        return NULL;
+
+    char field[TEXT_LENGTH];
+    bool continue_parsing = true;
+    bool parenthesis_opened = false;
+
+    sql = get_sep_space(sql);
+
+    if (*sql == '(') {
+        sql++;
+        parenthesis_opened = true;
+    }
+
+    while (continue_parsing) {
+        if (has_reached_sql_end(sql))
+            continue_parsing = false;
+        else {
+            sql = get_field_name(sql, field);
+
+            if (!sql)
+                return NULL;
+
+            result->fields[result->fields_count].field_type = TYPE_UNKNOWN;
+            strcpy(result->fields[result->fields_count].field_value.text_value, field);
+            result->fields_count++;
+
+            // Check if the list of fields or values continues with the presence of a comma ','
+            if (get_sep_space_and_char(sql, ',') != NULL)
+                sql = get_sep_space_and_char(sql, ',');
+            else
+                continue_parsing = false;
+        }
+    }
+
+    if (!sql)
+        return NULL;
+
+    // Check if the list of fields or values ends with a parenthesis as it has an opened parenthesis.
+    if (parenthesis_opened && get_sep_space_and_char(sql, ')') != NULL) {
+        sql = get_sep_space_and_char(sql, ')');
+        return sql;
+    } else if (!parenthesis_opened) {
+        return sql;
+    } else {
+        printf("Error: Expected ')'\n");
+        return NULL;
+    }
 }
 
 char *parse_create_fields_list(char *sql, table_definition_t *result) {
