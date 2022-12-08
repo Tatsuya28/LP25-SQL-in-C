@@ -139,7 +139,7 @@ bool has_reached_sql_end(char *sql) {
  * Extract a list of fields or values. The result is stored in the data structure table_record_t pointed by result.
  * @param sql Pointer to a position in the sql query.
  * @param result Pointer to the list of values or fields names in an organised data structure.
- * @return char* Pointer to the position in the query after the list of fields or values.
+ * @return char* Pointer to the position in the sql query after the list of fields or values.
  */
 char *parse_fields_or_values_list(char *sql, table_record_t *result) {
     if (!sql || !result)
@@ -192,7 +192,76 @@ char *parse_fields_or_values_list(char *sql, table_record_t *result) {
     }
 }
 
+/**
+ * Extract a definition of a table in the data structure table_definition_t pointed by result.
+ * @param sql Pointer to a position in the sql query.
+ * @param result Pointer to the table definition data structure.
+ * @return char* Pointer to the position in the sql query after the table definition.
+ */
 char *parse_create_fields_list(char *sql, table_definition_t *result) {
+    if (!sql || !result)
+        return NULL;
+
+    sql = get_sep_space(sql);
+
+    if (has_reached_sql_end(sql) || !get_sep_space_and_char(sql, '(')) {
+        printf("Waiting for a list of fields or values...\n");
+        return NULL;
+    }
+    sql++;
+
+    if (has_reached_sql_end(sql)) {
+        printf("Waiting for a list of fields or values...\n");
+        return NULL;
+    }
+
+    while (!get_sep_space_and_char(sql, ')')) {
+        // Get the field name
+        sql = get_field_name(sql, result->definitions[result->fields_count].column_name);
+
+        if (!sql) {
+            printf("Error: Field name incorrect...\n");
+            return NULL;
+        }
+
+        if (has_reached_sql_end(sql)) {
+            printf("Error: Incorrect field list...\n");
+            return NULL;
+        }
+
+        sql = get_sep_space(sql);
+        if (get_keyword(sql, "primary key")) {
+            result->definitions[result->fields_count].column_type = TYPE_PRIMARY_KEY;
+            sql = get_keyword(sql, "primary key");
+
+        } else if (get_keyword(sql, "int")) {
+            result->definitions[result->fields_count].column_type = TYPE_INTEGER;
+            sql = get_keyword(sql, "int");
+
+        } else if (get_keyword(sql, "float")) {
+            result->definitions[result->fields_count].column_type = TYPE_FLOAT;
+            sql = get_keyword(sql, "float");
+
+        } else if (get_keyword(sql, "text")) {
+            result->definitions[result->fields_count].column_type = TYPE_TEXT;
+            sql = get_keyword(sql, "text");
+
+        } else {
+            printf("Error: Field type incorrect...\n");
+            return NULL;
+        }
+        sql = get_sep_space(sql);
+
+        result->fields_count++;
+
+        if (get_sep_space_and_char(sql, ','))
+            sql = get_sep_space_and_char(sql, ',');
+        else if (!get_sep_space_and_char(sql, ')')) {
+            printf("Error: Missing ')' at the end of the fields lists\n");
+        }
+    }
+    sql++;
+
     return sql;
 }
 
